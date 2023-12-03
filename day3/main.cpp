@@ -14,7 +14,7 @@ void solve(int* total, string input_data_path) {
 
     if (file.is_open()) {
         while (getline(file, next_line) || line != "") {
-            if (line != "") compute_line_p1(total, line, last_line, next_line);
+            if (line != "") compute_line_p2(total, line, last_line, next_line);
             
             last_line = line;
             line = next_line;
