@@ -14,12 +14,8 @@ void symbol_line(bool* is_adjacent, int i, string line, bool is_cur_line = false
 }
 
 void symbol_adjacent(bool* is_adjacent, int i, string line, string last_line, string next_line) {
-    if (last_line != "") {
-        symbol_line(is_adjacent, i, last_line);
-    } 
-    if (next_line != "") {
-        symbol_line(is_adjacent, i, next_line);
-    }
+    if (last_line != "") symbol_line(is_adjacent, i, last_line);
+    if (next_line != "") symbol_line(is_adjacent, i, next_line);
     symbol_line(is_adjacent, i, line, true);
 }
 
