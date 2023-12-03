@@ -31,10 +31,8 @@ void compute_line(int* total, string line, string last_line, string next_line) {
         if (isdigit(line[i])) {
             buffer += line[i];
             symbol_adjacent(&is_adjacent, i, line, last_line, next_line);
-        } else if (!isdigit(line[i]) && buffer != "") {
-            cout << buffer << endl;
-            if (is_adjacent) cout << "symbol adjacent" << endl;
-            else cout << "not adjacent" << endl;
+        }
+        if ((!isdigit(line[i]) && buffer != "") || (i == line.size()-1 && buffer != "")) {
             if (is_adjacent) *total += stoi(buffer);
 
             buffer = "";
