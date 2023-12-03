@@ -4,14 +4,13 @@ using namespace std;
 
 
 void symbol_line(bool* is_adjacent, int i, string line, bool is_cur_line = false) {
-    int j_max = 3;
-    for (int j = 0; j < j_max; j++) {
+    for (int j = 0; j < 3; j++) {
         int idx = i-1+j;
         if (idx < 0) continue;
         else if (idx > line.size()-1) continue;
         else if (idx == i && is_cur_line) continue;
 
-        *is_adjacent = !isdigit(line[idx]) && line[idx] != '.';
+        *is_adjacent = *is_adjacent || (!isdigit(line[idx]) && line[idx] != '.');
     }
 }
 
@@ -33,7 +32,10 @@ void compute_line(int* total, string line, string last_line, string next_line) {
             buffer += line[i];
             symbol_adjacent(&is_adjacent, i, line, last_line, next_line);
         } else if (!isdigit(line[i]) && buffer != "") {
-            if (is_adjacent) total += stoi(buffer);
+            cout << buffer << endl;
+            if (is_adjacent) cout << "symbol adjacent" << endl;
+            else cout << "not adjacent" << endl;
+            if (is_adjacent) *total += stoi(buffer);
 
             buffer = "";
             is_adjacent = false;
@@ -43,7 +45,7 @@ void compute_line(int* total, string line, string last_line, string next_line) {
 
 void solve(int* total, string input_data_path) {
     fstream file;
-    string line = "", next_line, last_line;
+    string line, next_line, last_line;
     file.open(input_data_path);
 
     if (file.is_open()) {
