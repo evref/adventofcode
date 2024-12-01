@@ -4,7 +4,7 @@ import re
 data = np.genfromtxt("input", autostrip=True, dtype=int)
 transposed = data.T
 sorted = np.sort(transposed)
-diffs = np.abs(sorted[0]-sorted[1])
+diffs = np.abs(np.diff(sorted, axis=0))
 diff = np.sum(diffs)
 
 print(diff)
