@@ -7,8 +7,4 @@ These are my solutions to the advent of code for the following years:
 This year C++ was the language of choice. The goal was to learn more about writing C++ code.
 
 ### 2024
-<<<<<<< HEAD
 This year Python (especially with NumPy) is the language of choice. The goal is to get comfortable with tensor operations such as broadcasting in NumPy. Therefore, after the completion of each day's tasks the goal is to fully vectorize the implementations.
-=======
-This year Python (especially with NumPy) is the language of choice. The goal is to get comfortable with tensor operations such as broadcasting in NumPy. Therefore, after the completion of each day's tasks the goal is to fully vectorize the implementations.
->>>>>>> 2845771 (docs: update README with goals)
