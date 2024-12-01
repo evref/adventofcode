@@ -1,51 +1,47 @@
 #include <iostream>
 #include <fstream>
-#include <list>
+#include <vector>
 #include <cmath>
 using namespace std;
 
 
-void comput_wins_line(int* num_of_wins, list<int>* winning_nums, list<int>* my_nums) {
-    int winning_nums_array[winning_nums->size()];
-    for (int i = 0; i < winning_nums->size(); i++) {
-        winning_nums_array[i] = winning_nums->front();
-        winning_nums->pop_front();
-    }
-
+void compute_wins_line(int* num_of_wins, vector<string>* winning_nums, vector<string>* my_nums) {
     while (my_nums->size() > 0) {
-        int my_cur_num = my_nums->back();
+        string my_cur_num = my_nums->back();
         my_nums->pop_back();
-        for (int i = 0; i < winning_nums->size(); i++) {
-            if (my_cur_num == winning_nums_array[i]) {
-                *num_of_wins++;
+        for (auto i = winning_nums->begin(); i != winning_nums->end(); i++) {
+            if (my_cur_num == *i) {
+                *num_of_wins += 1;
                 break;
             }
         }
     }
 }
 
-void interpret_line(list<int>* winning_nums, list<int>* my_nums, string line) {
+void interpret_line(vector<string>* winning_nums, vector<string>* my_nums, string line) {
     string buffer;
     bool passed_bar = false;
     for (int i = 10; i < line.size(); i++) {
         if (isdigit(line[i])) {
             buffer += line[i];
         } else if (line[i] == '|') passed_bar = true;
-        else if (buffer != "") {
-            if (passed_bar) my_nums->push_back(stoi(buffer));
-            else winning_nums->push_back(stoi(buffer));
+        
+        if ((!isdigit(line[i]) && buffer != "") || i == line.size()-1) {
+            if (passed_bar) my_nums->push_back(buffer);
+            else winning_nums->push_back(buffer);
             buffer = "";
         }
     }
 }
 
 void solve_line(int* total, string line) {
-    list<int> winning_nums, my_nums;
+    vector<string> winning_nums, my_nums;
     interpret_line(&winning_nums, &my_nums, line);
     
     int num_of_wins = 0;
-    comput_wins_line(&num_of_wins, &winning_nums, &my_nums);
+    compute_wins_line(&num_of_wins, &winning_nums, &my_nums);
     cout << num_of_wins << endl;
+    cout << endl;
 
     *total += pow(2, num_of_wins-1);
 }
