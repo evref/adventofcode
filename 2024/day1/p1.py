@@ -1,5 +1,4 @@
 import numpy as np
-import re
 
 data = np.genfromtxt("input", autostrip=True, dtype=int)
 
