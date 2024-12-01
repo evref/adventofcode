@@ -1,8 +1,10 @@
 import numpy as np
 
 data = np.genfromtxt("input", autostrip=True, dtype=int)
+
 transposed = data.T
-similarity_scores = [val * np.sum(transposed[1] == val) for val in transposed[0]]
+expanded = np.expand_dims(transposed[1], axis=1)
+similarity_scores = transposed[0] * np.sum(expanded == transposed[0], axis=0)
 similarity_score = np.sum(similarity_scores)
 
 print(similarity_score)
