@@ -2,7 +2,7 @@ import math
 
 def parse():
     data = []
-    with open("input", 'r') as file:
+    with open("input_mini", 'r') as file:
         for line_idx, line in enumerate(file):
             data.append([])
             line = line.strip()
@@ -39,6 +39,20 @@ def new_dir(dir_x, dir_y):
         return (0,-1)
     else:
         return (-1,0)
+    
+def print_path(data, y, x, dir_x, just_turned):
+    if just_turned and dir_x != 0:
+        return '|'
+    elif just_turned and dir_x == 0:
+        return '-'
+    
+    char_to_print = '|'
+    if dir_x != 0:
+        char_to_print = '-'
+    if (data[y][x] == '|' and char_to_print == '-') or (data[y][x] == '-' and char_to_print == '|'):
+        char_to_print = '+'
+
+    return char_to_print
 
 def count_x(data):
     count = 0
@@ -74,7 +88,9 @@ def solve2(data):
     guard_pos, guard_dir = find_guard(data)
     y, x = guard_pos
     dir_y, dir_x = guard_dir
-    turn_positions = []
+    last_turn_positions = []
+    new_obstruction_count = 0
+    just_turned = False
 
     while True:
         new_y = y + dir_y
@@ -82,54 +98,68 @@ def solve2(data):
 
         # If guard has exited
         if check_guard_pos_exit(data, new_y, new_x):
-            data[y][x] = 'X'
+            data[y][x] = print_path(data, y, x, dir_x, just_turned)
             break
         
         # Get new direction if obstruction in front of guard
         if check_guard_pos_obstruction(data, new_y, new_x):
             dir_y, dir_x = new_dir(dir_x, dir_y)
-            turn_positions.append((len(turn_positions), y, x))
+            last_turn_positions.append((y, x))
+            just_turned = True
         else: # Otherwise keep on walking and replace old pos with an 'X'
-            data[y][x] = 'X'
+            # Check for single loops (rectangles) in last 3 turns
+            if len(last_turn_positions) == 3:
+                if (y == last_turn_positions[0][0] and x == last_turn_positions[2][1]) or (y == last_turn_positions[2][0] and x == last_turn_positions[0][1]):
+                    y_mid, x_mid = last_turn_positions[1]
+                    y_first, x_first = last_turn_positions[0]
+                    y_last, x_last = last_turn_positions[2]
+                    if y_mid == y_first or y_mid == y_last:
+                        if y_mid == y_first and x_mid == x_last:
+                            new_obstruction_count += 1
+                            print(f"Mid: {last_turn_positions[1]}")
+                            print(f"First: {last_turn_positions[0]}")
+                            print(f"Last: {last_turn_positions[2]}")
+                            print()
+                        elif y_mid == y_last and x_mid == x_first:
+                            new_obstruction_count += 1
+                            print(f"Mid: {last_turn_positions[1]}")
+                            print(f"First: {last_turn_positions[0]}")
+                            print(f"Last: {last_turn_positions[2]}")
+                            print()
+            
+            # Make sure last_turn_positions contains only last 3 turns
+            if len(last_turn_positions) > 3:
+                last_turn_positions.pop(0)
+
+            sim_y, sim_x = y, x
+            
+            while True:
+                sim_dir_y, sim_dir_x = new_dir(dir_x, dir_y)
+                sim_new_y, sim_new_x = sim_y+sim_dir_y, sim_x+sim_dir_x
+
+                if check_guard_pos_exit(data, sim_new_y, sim_new_x):
+                    break
+                elif check_guard_pos_obstruction(data, sim_new_y, sim_new_x):
+                    break
+                
+                if (data[sim_new_y][sim_new_x] == '|' and sim_dir_x == 0) or (data[sim_new_y][sim_new_x] == '-' and sim_dir_x != 0):
+                    new_obstruction_count += 1
+                    break
+
+                sim_y, sim_x = sim_new_y, sim_new_x
+            
+
+            data[y][x] = print_path(data, y, x, dir_x, just_turned)
+            just_turned = False
+
             x, y = new_x, new_y
 
-    # Exhaustive search / Brute force search for the three edges of a rectangle, a loop is found if the three edges of a rectangle are found
-    # and the fourth edge == 'X' in data.
-    count = 0
-    mid_points = []
-    for mid_pos in turn_positions:
-        _, mid_y, mid_x = mid_pos
-        for edge_pos_1 in turn_positions:
-            if mid_pos == edge_pos_1 or mid_points.__contains__(edge_pos_1):
-                continue
-            _, edge_1_y, edge_1_x = edge_pos_1
-            # Check if edges are next on same x or same y
-            if mid_y == edge_1_y or mid_x == edge_1_x:
-                y_is_same = mid_y == edge_1_y
-                for edge_pos_2 in turn_positions:
-                    if edge_pos_2 == mid_pos or edge_pos_2 == edge_pos_1 or mid_points.__contains__(edge_pos_2):
-                        continue
-                    _, edge_2_y, edge_2_x = edge_pos_2
-                    # If y values were same now check x values
-                    if y_is_same:
-                        if mid_x == edge_2_x and data[edge_2_y][edge_1_x] == 'X':
-                            count += 1
-                            print(f"Mid point: {mid_pos}")
-                            print(f"Edge point 1: {edge_pos_1}")
-                            print(f"Edge point 2: {edge_pos_2}")
-                            print()
-                            mid_points.append(mid_pos)
-                    else: # If x values were same now check y values
-                        if mid_y == edge_2_y and data[edge_1_y][edge_2_x] == 'X':
-                            count += 1
-                            print(f"Mid point: {mid_pos}")
-                            print(f"Edge point 1: {edge_pos_1}")
-                            print(f"Edge point 2: {edge_pos_2}")
-                            print()
-                            mid_points.append(mid_pos)
-                        
-    # Take into account that each rectangle will generate two permutations as we don't save which edges we've saved
-    return round(count / 2)
+    for line in data:
+        s = ""
+        for c in line:
+            s += c
+        print(s)
+    return new_obstruction_count
 
 data = parse()
 solution = solve2(data)
