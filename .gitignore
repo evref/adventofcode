@@ -4,3 +4,4 @@ Makefile
 .vscode/
 input
 input_*
+*.class
