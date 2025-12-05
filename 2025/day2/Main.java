@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         String[] tempInput = processInput();
-        int tempAnswer = p1(tempInput);
+        Long tempAnswer = p2(tempInput);
         System.out.println(tempAnswer);
     }
 
@@ -24,26 +24,65 @@ public class Main {
         return tempIntervals;
     }
 
-    static int p1(String[] anInput) {
-        int tempSum = 0;
+    static Long p1(String[] anInput) {
+        Long tempSum = 0L;
 
         for (int i = 0; i < anInput.length; i+=2) {
             String tempStart = anInput[i];
             String tempEnd = anInput[i+1];
+            System.out.println(tempStart + " - " + tempEnd);
 
-            int tempStartNum = Integer.parseInt(tempStart);
-            int tempEndNum = Integer.parseInt(tempEnd);
+            Long tempStartNum = Long.parseLong(tempStart);
+            Long tempEndNum = Long.parseLong(tempEnd);
 
-            for (int j = tempStartNum; j <= tempEndNum; j++) {
-                String tempCurrentNum = Integer.toString(j);
+            for (Long j = tempStartNum; j <= tempEndNum; j++) {
+                String tempCurrentNum = Long.toString(j);
 
                 if (tempCurrentNum.length() % 2 == 0) {
                     int tempHalfIdx = tempCurrentNum.length() / 2;
                     String tempFirstHalf = tempCurrentNum.substring(0, tempHalfIdx);
                     String tempLastHalf = tempCurrentNum.substring(tempHalfIdx);
-                    System.out.println(tempFirstHalf + " + " + tempLastHalf + " = " + tempCurrentNum);
                     if (tempFirstHalf.equals(tempLastHalf)) {
                         tempSum += j;
+                    }
+                }
+            }
+        }
+
+        return tempSum;
+    }
+
+    static Long p2(String[] anInput) {
+        Long tempSum = 0L;
+
+        for (int i = 0; i < anInput.length; i+=2) {
+            String tempStart = anInput[i];
+            String tempEnd = anInput[i+1];
+            System.out.println(tempStart + " - " + tempEnd);
+
+            Long tempStartNum = Long.parseLong(tempStart);
+            Long tempEndNum = Long.parseLong(tempEnd);
+
+            for (Long j = tempStartNum; j <= tempEndNum; j++) {
+                String tempCurrentNum = Long.toString(j);
+
+                for (int k = 1; k < tempCurrentNum.length()/2+1; k++) {
+                    if (tempCurrentNum.length() % k != 0) continue;
+
+                    boolean tempSubstringsAreEven = true;
+                    for (int m = 0; m < tempCurrentNum.length() / k - 1; m++) {
+                        String tempFormerSubNum = tempCurrentNum.substring(k*m, k*(m+1));
+                        String tempLatterSubNum = tempCurrentNum.substring(k*(m+1), k*(m+2));
+                        tempSubstringsAreEven = tempFormerSubNum.equals(tempLatterSubNum);
+
+                        if (!tempSubstringsAreEven) {
+                            break;
+                        }
+                    }
+
+                    if (tempSubstringsAreEven) {
+                        tempSum += j;
+                        break;
                     }
                 }
             }
