@@ -5,3 +5,4 @@ Makefile
 input
 input_*
 *.class
+lib/
