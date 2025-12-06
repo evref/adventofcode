@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -8,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
         Grid grid = processInput();
-        int answer = p1(grid);
+        int answer = p2(grid);
         System.out.println(answer);
     }
 
@@ -48,15 +49,39 @@ public class Main {
     }
 
     static int p1(Grid grid) {
+        return p1(grid, false);
+    }
+    static int p1(Grid grid, boolean removePaper) {
         int sum = 0;
+        ArrayList<Integer> coordsToRemove = new ArrayList<Integer>();
 
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {
                 if (grid.sumAdjacents(x, y) < 4 && grid.get(x, y) == 1) {
                     sum++;
+                    coordsToRemove.add(x);
+                    coordsToRemove.add(y);
                 }
             }
         }
+
+        if (removePaper) {
+            for (int i = 0; i < coordsToRemove.size(); i+=2) {
+                grid.set(coordsToRemove.get(i), coordsToRemove.get(i+1), 0);
+            }
+        }
+
+        return sum;
+    }
+
+    static int p2(Grid grid) {
+        int sum = 0;
+        int iterAdd = 0;
+
+        do {
+            iterAdd = p1(grid, true);
+            sum += iterAdd;
+        } while (iterAdd != 0);
 
         return sum;
     }
