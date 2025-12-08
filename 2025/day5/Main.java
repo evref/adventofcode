@@ -1,13 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Main {
     
 
     public static void main(String[] args) {
         Problem inputData = processInput();
-        int answer = p1(inputData);
+        int answer = p2(inputData);
         System.out.println(answer);
     }
 
@@ -53,4 +55,15 @@ public class Main {
         return sum;
     }
     
+    static int p2(Problem inputData) {
+        Set<Long> freshIdList = new HashSet<Long>();
+
+        for (Interval interval : inputData.ingredientIntervalList) {
+            for (Long i = interval.getStart(); i <= interval.getStop(); i++) {
+                freshIdList.add(i);
+            }
+        }
+
+        return freshIdList.size();
+    }
 }
