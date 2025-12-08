@@ -7,5 +7,9 @@ public class Interval {
     }
 
     public Long getStart() { return start; };
+    public void setStart(Long start) { this.start = start; };
+
     public Long getStop() { return stop; };
+    public void setStop(Long stop) { this.stop = stop; };
+
 }
